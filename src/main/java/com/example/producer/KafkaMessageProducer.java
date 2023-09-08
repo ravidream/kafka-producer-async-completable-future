@@ -6,13 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.kafka.core.KafkaProducerException;
-import org.springframework.kafka.core.KafkaSendCallback;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFuture;
 
 @Component
 public class KafkaMessageProducer {
@@ -33,12 +30,12 @@ public class KafkaMessageProducer {
 	        CompletableFuture<SendResult<String, String>> completableFuture = this.kafkaTemplate.execute(ctx -> {
 	            return kafkaTemplate.send(TOPIC, message);
 	        }).completable();
-	        completableFuture.whenComplete((sr, ex) -> {
+	        completableFuture.whenComplete((s, ex) -> {
 	            if (ex != null) {
 	                future.completeExceptionally(ex);
 	            }
 	            else {
-	                future.complete(sr);
+	                future.complete(s);
 	            }
 	        });
 	    }
